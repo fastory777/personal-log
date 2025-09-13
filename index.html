@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Min Praksislogg</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #1e2021;
+            color: #beb6bd;
+            font-family: 'Roboto Mono', monospace;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        .noise {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAMAAABHPGVmAAAAJ1BMVEUAAACEhISUlJTU1NSzs7O7u7vHx8fX19f39/f7+/v////+/v7///9dU0pwAAAACHRSTlMAAQIDBAUGBwgJio8AAABUSURBVHja7dCxDYAwEAAxOPr/Lz7QAxawgJ0k6gBAgK8qQKIoCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCIIgCILgfwBB7QD1pLPrSwAAAABJRU5ErkJggg==') repeat;
+            opacity: 0.04;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Header og navigasjon */
+        header {
+            padding: 20px 0;
+            margin-bottom: 40px;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: #6882a3;
+            text-shadow: 0 0 10px rgba(104, 130, 163, 0.7);
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .logo::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #6882a3;
+            box-shadow: 0 0 8px rgba(104, 130, 163, 0.5);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.5s ease;
+        }
+
+        .logo:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: #beb6bd;
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 5px 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #6882a3;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 8px rgba(104, 130, 163, 0.5);
+        }
+
+        .nav-links a:hover {
+            color: #6882a3;
+            text-shadow: 0 0 8px rgba(104, 130, 163, 0.6);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Seksjoner */
+        section {
+            margin-bottom: 60px;
+            padding: 30px;
+            background: rgba(30, 32, 33, 0.8);
+            border-radius: 10px;
+            border: 1px solid rgba(104, 130, 163, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(104, 130, 163, 0.1), transparent);
+            transition: left 0.7s ease;
+        }
+
+        section:hover::before {
+            left: 100%;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #6882a3;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            text-shadow: 0 0 8px rgba(104, 130, 163, 0.5);
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: #6882a3;
+            box-shadow: 0 0 8px rgba(104, 130, 163, 0.5);
+            transition: width 0.5s ease;
+        }
+
+        h2:hover::after {
+            width: 100%;
+        }
+
+        /* Praksislogg */
+        .logg-innlegg {
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid rgba(104, 130, 163, 0.3);
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .logg-innlegg:hover {
+            transform: translateX(10px);
+        }
+
+        .logg-innlegg:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .logg-dato {
+            color: #beb6bd;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: block;
+            text-shadow: 0 0 5px rgba(190, 182, 189, 0.5);
+        }
+
+        .logg-bilde {
+            width: 100%;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 1px solid rgba(104, 130, 163, 0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logg-bilde::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(104, 130, 163, 0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .logg-bilde:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 20px rgba(104, 130, 163, 0.3);
+        }
+
+        .logg-bilde:hover::before {
+            opacity: 1;
+        }
+
+        /* Prosjekter */
+        .prosjekt-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .prosjekt-kort {
+            background: rgba(35, 37, 38, 0.8);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid rgba(104, 130, 163, 0.3);
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .prosjekt-kort::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(104, 130, 163, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .prosjekt-kort:hover {
+            transform: translateY(-10px) rotate(1deg);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            border-color: rgba(104, 130, 163, 0.5);
+        }
+
+        .prosjekt-kort:hover::before {
+            opacity: 1;
+        }
+
+        .prosjekt-kort h3 {
+            color: #6882a3;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            text-shadow: 0 0 5px rgba(104, 130, 163, 0.3);
+        }
+
+        /* Om meg */
+        .profil {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .profil-bilde {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 3px solid #6882a3;
+            box-shadow: 0 0 20px rgba(104, 130, 163, 0.5);
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #2c3e50, #6882a3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #beb6bd;
+            font-size: 4rem;
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profil-bilde::before {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 200%;
+            background: linear-gradient(transparent, rgba(255, 255, 255, 0.2), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite linear;
+        }
+
+        .profil-bilde:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(104, 130, 163, 0.7);
+        }
+
+        .cv-last-ned {
+            display: inline-block;
+            background: rgba(104, 130, 163, 0.2);
+            color: #6882a3;
+            padding: 12px 25px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 20px;
+            border: 1px solid rgba(104, 130, 163, 0.3);
+            transition: all 0.5s ease;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cv-last-ned::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .cv-last-ned:hover {
+            background: rgba(104, 130, 163, 0.3);
+            box-shadow: 0 0 15px rgba(104, 130, 163, 0.4);
+            transform: translateY(-3px);
+        }
+
+        .cv-last-ned:hover::before {
+            left: 100%;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 60px;
+            border-top: 1px solid rgba(104, 130, 163, 0.3);
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: #6882a3;
+            box-shadow: 0 0 8px rgba(104, 130, 163, 0.5);
+        }
+
+        /* Animasjoner */
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(-3px, -3px); }
+            60% { transform: translate(3px, 3px); }
+            80% { transform: translate(3px, -3px); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        @keyframes shine {
+            0% { left: -50%; }
+            100% { left: 150%; }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0); }
+        }
+
+        .glitch-effect {
+            animation: glitch 0.5s infinite;
+        }
+
+        .float-animation {
+            animation: float 3s infinite ease-in-out;
+        }
+
+        /* Teknologiske elementer */
+        .tech-element {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: 1px solid rgba(104, 130, 163, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            animation: float 5s infinite ease-in-out;
+        }
+
+        .tech-element::before, .tech-element::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 1px solid rgba(104, 130, 163, 0.2);
+            border-radius: 50%;
+            animation: pulse 3s infinite ease-in-out;
+        }
+
+        .tech-element::after {
+            animation-delay: 1.5s;
+        }
+
+        /* Scroll animasjon */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Particle effects */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #6882a3;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: particleFloat 15s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.5;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Responsivt design */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .nav-links {
+                margin-top: 20px;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .prosjekt-grid {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .nav-links a {
+                font-size: 1rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="noise"></div>
+
+<!-- Particle effects -->
+<div class="particles" id="particles"></div>
+
+<!-- Teknologiske elementer i bakgrunnen -->
+<div class="tech-element" style="top: 10%; left: 5%;"></div>
+<div class="tech-element" style="top: 70%; right: 10%;"></div>
+<div class="tech-element" style="top: 40%; left: 15%;"></div>
+
+<div class="container">
+    <header>
+        <div class="logo">PRAKSIS<span style="color: #beb6bd;">LOGG</span></div>
+        <ul class="nav-links">
+            <li><a href="#hjem">Hjem</a></li>
+            <li><a href="#praksis">Praksis</a></li>
+            <li><a href="#prosjekter">Prosjekter</a></li>
+            <li><a href="#om-meg">Om meg</a></li>
+        </ul>
+    </header>
+
+    <main>
+        <section id="hjem">
+            <h2>Velkommen til min praksislogg</h2>
+            <p>Dette er min digitale plattform for dokumentasjon av praksisperioden min. Her finner du ukentlige oppdateringer, prosjekter og erfaringer jeg samler gjennom praksis.</p>
+            <p>Nettsiden vil jevnlig bli oppdatert med nytt innhold som viser mine ferdigheter og læring.</p>
+        </section>
+
+        <section id="zymfonix">
+            <h2>Zymfonix</h2>
+            <p>Finne ut mer om bedriften og presentere den på nettstedet.</p>
+
+            <div class="prosjekt-grid">
+                <div class="prosjekt-kort">
+                    <h3>About Us</h3>
+                    <p><strong>Harmonizing People & Technology</strong></p>
+                    <p>Team Zymfonix består av lidenskapelige gründere og teknologieksperter med dokumentert erfaring i å levere innovative løsninger innen luftfart, bemanning, romfart og forsvar, maritim industri og olje & gass.</p>
+                    <p>I tillegg samarbeider de tett med nøye utvalgte frilansere og partnere for å levere hele kompetansespekteret som trengs for å bringe innovative ideer til markedet.</p>
+                </div>
+
+                <div class="prosjekt-kort">
+                    <h3>Services</h3>
+                    <p>Zymfonix leverer banebrytende løsninger innen global crew management for luftfart, bemanning, romfart & forsvar, maritim industri og olje & gass.</p>
+                    <p>De har strategiske samarbeid med industrielle og akademiske partnere innen teknologier som AI og maskinlæring, og har fått støtte fra Forskningsrådet flere ganger.</p>
+                </div>
+
+                <div class="prosjekt-kort">
+                    <h3>Consulting</h3>
+                    <p>Zymfonix fungerer som en <strong>teknologirådgiver</strong> for selskaper som ønsker å utnytte digitale muligheter. De bidrar med vurdering, implementering og utvikling av nye ideer, konsepter og teknologier.</p>
+                </div>
+
+                <div class="prosjekt-kort">
+                    <h3>Development</h3>
+                    <p>Som din <strong>software development partner</strong> utvikler Zymfonix skreddersydde programvareløsninger sammen med kundene. Målet er å gå fra problem til målbare resultater.</p>
+                </div>
+
+                <div class="prosjekt-kort">
+                    <h3>Recruitment & People Management</h3>
+                    <p>Zymfonix har utviklet produktene <strong>CREWMATCH</strong> og <strong>CREWMAN</strong> – innovative løsninger for masse-rekruttering og people management.</p>
+                    <ul>
+                        <li>450.000 kandidater screenet</li>
+                        <li>12.500 ansatte rekruttert og administrert</li>
+                        <li>Brukt i luftfart, romfart, maritim, olje & gass, teknologi og administrasjon</li>
+                    </ul>
+                </div>
+
+                <div class="prosjekt-kort">
+                    <h3>CREWMATCH & CREWMAN</h3>
+                    <p><strong>CREWMATCH:</strong> AI-drevet verktøy for rekruttering med fokus på kandidatopplevelse, datadrevet matching og høy kvalitet på ansettelser.</p>
+                    <p><strong>CREWMAN:</strong> Plattform for onboard­ing, crew management og HR-automatisering – gir mer tid til «ekte» HR-arbeid.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="praksis">
+            <h2>Praksislogg</h2>
+            <p>Her dokumenterer jeg mine oppgaver og erfaringer fra praksisperioden. Loggen oppdateres hver uke.</p>
+
+            <div class="logg-innlegg">
+                <span class="logg-dato">Fredag 5. september 2025</span>
+                <h3>Arbeid med designoppdatering på AAP Aviation Job Portal</h3>
+                <p>I dag fortsatte jeg arbeidet med å oppdatere designet på AAP Aviation Job Portal. Jeg bruker Vue til å forbedre struktur og brukervennlighet i grensesnittet.</p>
+                <p>Prosessen er fortsatt i gang, og jeg jobber med å gjøre portalen mer responsiv og visuelt konsistent. Arbeidet gir meg verdifull erfaring med moderne frontend-utvikling i Vue.</p>
+            </div>
+
+            <div class="logg-innlegg">
+    		<span class="logg-dato">Fredag 12. september 2025</span>
+    		<h3>Videre arbeid med nytt design og møte med Zymfonix</h3>
+    		<p>I dag fortsatte jeg arbeidet med å utvikle det nye designet for siden på AAP Aviation Job Portal. Fokus var på å gjøre grensesnittet mer oversiktlig og tilpasset brukernes behov.</p>
+    		<p>Vi hadde også et møte i Zymfonix med selskapets leder og hele teamet. Under møtet ble det diskutert en medarbeiders avgang og videre tiltak for selskapet. Jeg presenterte resultatene av arbeidet mitt så langt, og fikk både råd og konkrete tilbakemeldinger på hva som kunne forbedres. Generelt var stemningen positiv, og alle var fornøyde med fremgangen.</p>
+	    </div>
+
+
+
+
+        </section>
+
+        <section id="prosjekter">
+            <h2>Mine prosjekter</h2>
+            <p>Her er noen av prosjektene jeg har jobbet med, både i skolen og i fritiden.</p>
+
+            <div class="prosjekt-grid">
+                <div class="prosjekt-kort">
+                    <h3>Film Advisor Bot</h3>
+                    <p>En Telegram-bot laget med aiogram og SQLite. Den fungerer som en katalog for å finne filmer og serier til kvelden.</p>
+                </div>
+
+                <div class="prosjekt-kort">
+                    <h3>Mood Researcher Webapp</h3>
+                    <p>En webapplikasjon som forsker på brukerens humør. Laget med HTML og CSS i frontenden, med vurdering av Python eller JavaScript for backend.</p>
+                </div>
+
+                <div class="prosjekt-kort">
+                    <h3>PersonalPage</h3>
+                    <p>Et pågående prosjekt – en porteføljenettside bygget i Laravel 12 + Inertia/Vue3+TS, med Tailwind (tw-), PrimeVue, vue-query, vee-validate+zod, ApexCharts, GSAP og Spatie MediaLibrary.</p>
+                </div>
+
+                <div class="prosjekt-kort">
+                    <h3>Curse of Four Kingdoms</h3>
+                    <p>Et fantasy-brettspill med 4 helter, 64 relikviekort, 24 unike fiender, 20 hendelseskort og modulære brett. Har rikt narrativ, asymmetrisk gameplay og illustrasjoner laget med Stable Diffusion.</p>
+                </div>
+
+                <div class="prosjekt-kort">
+                    <h3>WiraProject Chatbot</h3>
+                    <p>En chatbot som svarer på spørsmål om ulike deler av selskapet: WiraShare, WiraMedia, WiraCoin, WiraCasino og WiraBet.</p>
+                </div>
+
+                <div class="prosjekt-kort">
+                    <h3>Arduino – motorer og hjul</h3>
+                    <p>Eksperimentering med små roboter basert på Arduino med motorer og hjul.</p>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="om-meg">
+            <div class="profil">
+                <div class="profil-bilde float-animation">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h2>Om meg</h2>
+                <p>Hei! Jeg er en entusiastisk student som studerer informasjonsteknologi. Jeg har en passion for webutvikling, design og brukeropplevelse. Gjennom studiene mine har jeg utviklet ferdigheter innen frontend- og backend-utvikling, samt prosjektledelse.</p>
+                <p>Jeg er alltid på utkikk etter nye utfordringer og læringsmuligheter, og ser frem til å utvide kompetansen min gjennom praksisperioden.</p>
+                <a href="#" class="cv-last-ned">Last ned CV</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Praksislogg - YFF vurdering</p>
+        <p>&copy; 2025 by fastory</p>
+    </footer>
+</div>
+
+<script>
+    // Scroll animasjon for seksjoner
+    document.addEventListener('DOMContentLoaded', function() {
+        const sections = document.querySelectorAll('section');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+
+        // Glitch effekt for logo ved innlasting
+        const logo = document.querySelector('.logo');
+        logo.classList.add('glitch-effect');
+
+        setTimeout(() => {
+            logo.classList.remove('glitch-effect');
+        }, 2000);
+
+        // Tilfeldig glitch effekt på lenker
+        const links = document.querySelectorAll('a');
+        setInterval(() => {
+            if (Math.random() > 0.95) {
+                const randomLink = links[Math.floor(Math.random() * links.length)];
+                randomLink.classList.add('glitch-effect');
+
+                setTimeout(() => {
+                    randomLink.classList.remove('glitch-effect');
+                }, 300);
+            }
+        }, 3000);
+
+        // Create particles
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 50;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+
+            // Random position
+            const posX = Math.random() * 100;
+            const posY = Math.random() * 100;
+
+            // Random size
+            const size = Math.random() * 3 + 1;
+
+            // Random animation delay
+            const delay = Math.random() * 15;
+
+            particle.style.left = `${posX}vw`;
+            particle.style.top = `${posY}vh`;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.animationDelay = `${delay}s`;
+
+            particlesContainer.appendChild(particle);
+        }
+
+        // Add hover effect to project cards
+        const projectCards = document.querySelectorAll('.prosjekt-kort');
+        projectCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px) rotate(1deg)';
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) rotate(0)';
+            });
+        });
+    });
+</script>
+</body>
+</html>
