@@ -1,0 +1,1 @@
+.gitignore gjør at hemmelig.txt ikke blir lagt til i repoet, slik at man kan skjule filer man ikke vil dele.
