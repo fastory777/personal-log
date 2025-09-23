@@ -1,0 +1,1 @@
+Jeg fikk en merge-konflikt fordi samme linje ble endret i to versjoner. Jeg løste det manuelt ved å velge riktig tekst
