@@ -904,13 +904,13 @@
                     entry.classList.remove('active');
                 });
 
-                // Show entries for the selected month and year
+                // Show all entries for the selected month and year
                 const logEntries = document.querySelector(`.log-entries[data-year="${year}"]`);
                 if (logEntries) {
-                    const monthEntries = logEntries.querySelector(`.logg-innlegg[data-month="${month}"]`);
-                    if (monthEntries) {
-                        monthEntries.classList.add('active');
-                    }
+                    const monthEntries = logEntries.querySelectorAll(`.logg-innlegg[data-month="${month}"]`);
+                    monthEntries.forEach(entry => {
+                        entry.classList.add('active');
+                    });
                 }
 
                 // Update button styles
